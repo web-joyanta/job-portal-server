@@ -31,6 +31,7 @@ async function run() {
     // jobs related apis
     const jobsDB = client.db("jobPortalDB");
     const jobsCollection = jobsDB.collection("jobs");
+    const jobsApplicationCollection = jobsDB.collection("job_applications");
 
     app.get("/jobs", async (req, res) => {
       const jobs = jobsCollection.find();
@@ -43,7 +44,14 @@ async function run() {
       const query = { _id: new ObjectId(id) }
       const result = await jobsCollection.findOne(query);
       res.send(result);
-    })
+    });
+
+    // job collection apis
+    app.post("/job-applications", async(req, res)=> {
+      const application = req.body;
+      const result = await jobsApplicationCollection.insertOne(application);
+      res.send(result);
+    });
 
   } finally {
     // Ensures that the client will close when you finish/error
