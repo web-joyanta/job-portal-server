@@ -46,6 +46,15 @@ async function run() {
       res.send(result);
     });
 
+    // query data
+    app.get("/job-application", async(req, res) => {
+      const email = req.query.email;
+      console.log(email)
+      const query = {applicant_email: email};
+      const result = await jobsApplicationCollection.find(query).toArray();
+      res.send(result);
+    })
+
     // job collection apis
     app.post("/job-applications", async(req, res)=> {
       const application = req.body;
