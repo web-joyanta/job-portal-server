@@ -61,12 +61,15 @@ async function run() {
           job.title = jobDetails.title;
           job.company = jobDetails.company;
           job.company_logo = jobDetails.company_logo; 
+          job.location = jobDetails.location; 
+          job.description = jobDetails.description; 
+          job.applicationDeadline = jobDetails.applicationDeadline; 
         }
       }
       // end code ignore
 
       res.send(result);
-    })
+    });
 
     // job collection apis
     app.post("/job-applications", async(req, res)=> {
@@ -74,6 +77,13 @@ async function run() {
       const result = await jobsApplicationCollection.insertOne(application);
       res.send(result);
     });
+
+    app.delete("/jobs/:id", async(req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id)};
+      const result = await jobsCollection.deleteOne(query);
+      res.send(result);
+    })
 
   } finally {
     // Ensures that the client will close when you finish/error
