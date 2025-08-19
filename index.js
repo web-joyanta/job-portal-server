@@ -34,7 +34,12 @@ async function run() {
     const jobsApplicationCollection = jobsDB.collection("job_applications");
 
     app.get("/jobs", async (req, res) => {
-      const jobs = jobsCollection.find();
+      const email = req.query.email;
+      let query = {};
+      if (email) {
+        query = { hr_email: email };
+      }
+      const jobs = jobsCollection.find(query);
       const result = await jobs.toArray();
       res.send(result);
     });
@@ -47,23 +52,23 @@ async function run() {
     });
 
     // query data
-    app.get("/job-application", async(req, res) => {
+    app.get("/job-application", async (req, res) => {
       const email = req.query.email;
-      const query = {applicant_email: email};
+      const query = { applicant_email: email };
       const result = await jobsApplicationCollection.find(query).toArray();
 
       // code ignore not best way
-      for(const job of result) {
+      for (const job of result) {
         const jobId = job.job_id;
-        const jobQuery = {_id: new ObjectId(jobId)};
+        const jobQuery = { _id: new ObjectId(jobId) };
         const jobDetails = await jobsCollection.findOne(jobQuery);
-        if(jobDetails) {
+        if (jobDetails) {
           job.title = jobDetails.title;
           job.company = jobDetails.company;
-          job.company_logo = jobDetails.company_logo; 
-          job.location = jobDetails.location; 
-          job.description = jobDetails.description; 
-          job.applicationDeadline = jobDetails.applicationDeadline; 
+          job.company_logo = jobDetails.company_logo;
+          job.location = jobDetails.location;
+          job.description = jobDetails.description;
+          job.applicationDeadline = jobDetails.applicationDeadline;
         }
       }
       // end code ignore
@@ -72,22 +77,22 @@ async function run() {
     });
 
     // job post
-    app.post("/jobs", async(req, res) =>{
+    app.post("/jobs", async (req, res) => {
       const newJob = req.body;
       const result = await jobsCollection.insertOne(newJob);
       res.send(result);
     });
 
     // job collection apis
-    app.post("/job-applications", async(req, res)=> {
+    app.post("/job-applications", async (req, res) => {
       const application = req.body;
       const result = await jobsApplicationCollection.insertOne(application);
       res.send(result);
     });
 
-    app.delete("/jobs/:id", async(req, res) => {
+    app.delete("/jobs/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await jobsCollection.deleteOne(query);
       res.send(result);
     })
