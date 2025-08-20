@@ -76,6 +76,14 @@ async function run() {
       res.send(result);
     });
 
+    // recruiter view applications related apis
+    app.get("/viewApplications/jobs/:job_id", async (req, res) => {
+      const jobId = req.params.job_id;
+      const query = { job_id: jobId };
+      const result = await jobsApplicationCollection.find(query).toArray();
+      res.send(result);
+    })
+
     // job post
     app.post("/jobs", async (req, res) => {
       const newJob = req.body;
