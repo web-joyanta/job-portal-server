@@ -116,6 +116,20 @@ async function run() {
       res.send(result);
     });
 
+    // status update patch method
+    app.patch("/job-applications/:id", async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const query = { _id: new ObjectId(id)};
+      const updateDoc = {
+        $set: {
+          status: data.status,
+        }
+      }
+      const result = await jobsApplicationCollection.updateOne(query, updateDoc);
+      res.send(result);
+    })
+
     app.delete("/jobs/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
